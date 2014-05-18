@@ -1,11 +1,11 @@
 AC_PREREQ(2.61)
 AC_INIT([matrixComp], [0.1], [mike@conlen.org])
-AC_CONFIG_SRCDIR([src/test.cpp])
+AC_CONFIG_SRCDIR([src/test.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CANONICAL_HOST
 AM_INIT_AUTOMAKE([-Wall -Werror])
-AC_PROG_CXX([g++])
-AC_PROG_CC([gcc])
+AC_PROG_CXX([g++-mp-4.8 g++])
+AC_PROG_CC([gcc-mp-4.8 gcc])
 AC_HEADER_STDC
 
 case $host_os in
@@ -28,6 +28,14 @@ esac
 
 CXXFLAGS="$CXXFLAGS --std=c++0x"
 LDFLAGS="$LDFLAGS"
+AC_SEARCH_LIBS([CU_initialize_registry], [cunit], [
+	AC_CHECK_HEADERS([CUnit/CUnit.h], [], [
+		echo "CUnit.h not found"; exit -1;
+	])
+
+], [
+	echo "libcunit not found"; exit -1
+])
 AC_CHECK_HEADERS([stdio.h])
 AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([malloc.h])
