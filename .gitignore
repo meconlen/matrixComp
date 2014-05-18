@@ -12,6 +12,7 @@
 *.la
 *.a
 
+.*.swp
 Makefile
 Makefile.in
 aclocal.m4
@@ -22,3 +23,4 @@ config.log
 config.status
 configure
 stamp-h1
+config.h.in~
