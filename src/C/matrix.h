@@ -11,7 +11,8 @@ int clean_matrixSuite(void);
 
 /* matrixSuite tests */
 
-void unit_matrixFoo(void);
+void unit_matrix2X2(void);
+void unit_matrix2X3X4(void);
 
 /* matrix multiplication */
 /* C=A*B */
@@ -20,6 +21,7 @@ void unit_matrixFoo(void);
 /* A, B and C are row major ordered */
 /* That is A[m][n] * B[n][p] = C[m][p] */
 
-int dMM(double **A, double **B, double **C, uint64_t m, uint64_t n, uint64_t p);
+int dMM(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p);
+void printMatrix(double *A, uint64_t m, uint64_t n);
 
 #endif
