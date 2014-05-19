@@ -22,6 +22,8 @@ void unit_matrix2X3X4(void);
 /* That is A[m][n] * B[n][p] = C[m][p] */
 
 int dMM(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p);
+
+int dMM2(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p);
 void printMatrix(double *A, uint64_t m, uint64_t n);
 
 #endif

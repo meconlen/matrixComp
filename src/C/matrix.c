@@ -86,6 +86,27 @@ int dMM(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
 	return(0);
 }
 
+int dMM2(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
+{
+	uint64_t	i, j, k;
+	uint64_t	rowA, rowB, rowC, colA, colB, colC;
+	uint64_t	indexA, indexB, indexC;
+	memset(C, 0, m*p*sizeof(double));
+	for(i=0; i<m; i++) {
+		rowC = i*p;
+		rowA = i*n;
+		for(j=0; j<p; j++) {
+			indexC = rowC + j;
+			for(k=0; k<n; k++) {
+				rowB = k*p; indexB = rowB+j;
+				indexA = rowA+k;
+				C[indexC] += A[indexA] * B[indexB];
+			}
+		}
+	}
+	return(0);
+}
+
 void printMatrix(double *A, uint64_t m, uint64_t n)
 {
 	uint64_t	i, j;
