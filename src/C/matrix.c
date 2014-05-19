@@ -86,6 +86,20 @@ int dMM(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
 	return(0);
 }
 
+int dMMb(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
+{
+	uint64_t	i, j, k;
+	memset(C, 0, m*p*sizeof(double));
+	for(i=0; i<m; i++) {
+		for(j=0; j<p; j++) {
+			for(k=0; k<n; k++) {
+				C[i*p+j] += A[i*n+k] * B[k*p+j];
+			}
+		}
+	}
+	return(0);
+}
+
 int dMM2(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
 {
 	uint64_t	i, j, k;
