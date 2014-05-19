@@ -37,12 +37,12 @@ int main(int argc, char *argv[], char *envp[])
 	A = calloc(n*n, sizeof(double));
 	B = calloc(n*n, sizeof(double));
 	C = calloc(n*n, sizeof(double));
+	for(i=0; i<n*n; i++) {
+		A[i] = drand48();
+		B[i] = drand48();
+	}
 
 	for(j=0; j<count; j++) {
-		for(i=0; i<n*n; i++) {
-			A[i] = drand48();
-			B[i] = drand48();
-		}
 
 		getrusage(RUSAGE_SELF, &ruStart);
 		dMM(A, B, C, n, n, n);
