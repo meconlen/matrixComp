@@ -15,9 +15,9 @@ int main(int argc, char *argv[], char *envp[])
 	double 	*A, *B, *C;
 	double elapsed;
 	double gflops[2] = {0.0, 0.0};
-	int 		i, j;
-	uint64_t	n, count = 1;
-	char 		c;
+	int 			i, j;
+	unsigned int	n, count = 1;
+	char 			c;
 
 	struct rusage 	ruStart, ruEnd;
 
@@ -71,7 +71,7 @@ int main(int argc, char *argv[], char *envp[])
 	}
 	gflops[0] /= count;
 	gflops[1] /= count;
-	printf("%llu: %f, %f, %f\n", n, gflops[0], gflops[1], gflops[0] - gflops[1]);
+	printf("%u, %u: %f, %f, %f\n", n, count, gflops[0], gflops[1], gflops[0] - gflops[1]);
 
 	return(0);
 error0:
