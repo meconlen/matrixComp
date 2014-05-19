@@ -71,7 +71,7 @@ int main(int argc, char *argv[], char *envp[])
 	}
 	gflops[0] /= count;
 	gflops[1] /= count;
-	printf("%lld: %f, %f, %f\n", n, gflops[0], gflops[1], gflops[0] - gflops[1]);
+	printf("%llu: %f, %f, %f\n", n, gflops[0], gflops[1], gflops[0] - gflops[1]);
 
 	return(0);
 error0:
