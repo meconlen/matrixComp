@@ -37,6 +37,7 @@ int main(int argc, char *argv[], char *envp[])
 				break;
 			case 'a':
 				algorithm = atoll(optarg);
+				break;
 			default:
 				goto error0;
 		}
