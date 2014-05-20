@@ -40,6 +40,7 @@ AC_SEARCH_LIBS([CU_initialize_registry], [cunit], [
 ])
 
 AC_SEARCH_LIBS([clock_getres clock_gettime clock_settime], [rt])
+AC_HEADER_TIME
 AC_CHECK_HEADERS([stdio.h])
 AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([malloc.h])
