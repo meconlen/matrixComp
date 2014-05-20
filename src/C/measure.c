@@ -8,71 +8,72 @@
 
 #include "matrix.h"
 
-#define SIZE 500
 
 int main(int argc, char *argv[], char *envp[])
 {
-	double 	*A, *B, *C;
-	double elapsed;
-	double gflops[2] = {0.0, 0.0};
+	double 			*A, *B, *C;
+	double 			elapsed;
+	double 			gflops = 0;
 	int 			i, j;
-	unsigned int	n, count = 1;
+	unsigned int	start = 1, end = 1, skip = 1, count = 1;
+	unsigned int	size = 1, algorithm = 1;
 	char 			c;
 
 	struct rusage 	ruStart, ruEnd;
 
-	while((c = getopt(argc, argv, "n:c:")) != -1)
+	while((c = getopt(argc, argv, "c:s:e:j:a:")) != -1)
 		switch(c) {
-			case 'n': 
-				n = atoll(optarg);
+			case 's': 
+				start = atoll(optarg);
+				break;
+			case 'e': 
+				end = atoll(optarg);
+				break;
+			case 'j': 
+				skip = atoll(optarg);
 				break;
 			case 'c':
 				count = atoll(optarg);
 				break;
+			case 'a':
+				algorithm = atoll(optarg);
 			default:
 				goto error0;
 		}
+	fprintf(stderr, "start = %d, end = %d, skip = %d, count = %d\n",
+		start, end, skip, count);
+	for(size=start; size<=end; size+=skip) {
+		for(j=0; j<count; j++) {
+			A = calloc(size * size, sizeof(double));
+			B = calloc(size * size, sizeof(double));
+			C = calloc(size * size, sizeof(double));
+			for(j=0; j<size * size; j++) {
+				A[j] = drand48();
+				B[j] = drand48();
+			}
+			getrusage(RUSAGE_SELF, &ruStart);
+			switch(algorithm) {
+				case 1:
+					dMM(A, B, C, size, size, size);
+					break;
+				case 2:
+					dMMT(A, B, C, size, size, size);
+					break;
+			}
 
-
-	A = calloc(n*n, sizeof(double));
-	B = calloc(n*n, sizeof(double));
-	C = calloc(n*n, sizeof(double));
-	for(i=0; i<n*n; i++) {
-		A[i] = drand48();
-		B[i] = drand48();
-	}
-
-	for(j=0; j<count; j++) {
-
-		getrusage(RUSAGE_SELF, &ruStart);
-		dMM(A, B, C, n, n, n);
-		getrusage(RUSAGE_SELF, &ruEnd);
-		if(SIZE < 10) {
-			printf("\nC = \n");
-			printMatrix(C, n, n);
+			getrusage(RUSAGE_SELF, &ruEnd);
+			elapsed =  ruEnd.ru_utime.tv_sec;
+			elapsed += (double)ruEnd.ru_utime.tv_usec / 1000000;
+			elapsed -= ruStart.ru_utime.tv_sec;
+			elapsed -= (double)ruStart.ru_utime.tv_usec / 1000000;
+			gflops += ((2.0*size*size*size)/1000000000)/elapsed;
+			free(A);
+			free(B);
+			free(C);		
 		}
-		elapsed =  ruEnd.ru_utime.tv_sec;
-		elapsed += (double)ruEnd.ru_utime.tv_usec / 1000000;
-		elapsed -= ruStart.ru_utime.tv_sec;
-		elapsed -= (double)ruStart.ru_utime.tv_usec / 1000000;
-		gflops[0] += ((2.0*n*n*n)/1000000000)/elapsed;
-		getrusage(RUSAGE_SELF, &ruStart);
-		dMMT(A, B, C, n, n, n);
-		getrusage(RUSAGE_SELF, &ruEnd);
-		if(SIZE < 10) {
-			printf("\nC = \n");
-			printMatrix(C, n, n);
-		}
-		elapsed =  ruEnd.ru_utime.tv_sec;
-		elapsed += (double)ruEnd.ru_utime.tv_usec / 1000000;
-		elapsed -= ruStart.ru_utime.tv_sec;
-		elapsed -= (double)ruStart.ru_utime.tv_usec / 1000000;
-		gflops[1] += ((2.0*n*n*n)/1000000000)/elapsed;
+		gflops /= count;
+		printf("%u %u %f\n", size, count, gflops);
 	}
-	gflops[0] /= count;
-	gflops[1] /= count;
-	printf("%u, %u: %f, %f, %f\n", n, count, gflops[0], gflops[1], gflops[1] - gflops[0]);
-
 	return(0);
 error0:
 	fprintf(stderr, "Usage: %s -n N\n", argv[0]);
