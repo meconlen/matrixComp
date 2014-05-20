@@ -14,6 +14,7 @@ int main(int argc, char *argv[], char *envp[])
 	if((matrixSuite = CU_add_suite("matrixSuite", init_matrixSuite, clean_matrixSuite)) == NULL) goto error1;
 	if((CU_add_test(matrixSuite, "matrix2X2()", unit_matrix2X2)) == NULL) goto error1;
 	if((CU_add_test(matrixSuite, "matrix2X3X4()", unit_matrix2X3X4)) == NULL) goto error1;
+	if((CU_add_test(matrixSuite, "matrix_dMMT()", unit_matrix_dMMT)) == NULL) goto error1;
 	CU_basic_set_mode(CU_BRM_VERBOSE);
 	CU_basic_run_tests();
 	return(0);

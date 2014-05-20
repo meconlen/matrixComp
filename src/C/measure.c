@@ -57,7 +57,7 @@ int main(int argc, char *argv[], char *envp[])
 		elapsed -= (double)ruStart.ru_utime.tv_usec / 1000000;
 		gflops[0] += ((2.0*n*n*n)/1000000000)/elapsed;
 		getrusage(RUSAGE_SELF, &ruStart);
-		dMM(A, B, C, n, n, n);
+		dMMT(A, B, C, n, n, n);
 		getrusage(RUSAGE_SELF, &ruEnd);
 		if(SIZE < 10) {
 			printf("\nC = \n");
@@ -71,7 +71,7 @@ int main(int argc, char *argv[], char *envp[])
 	}
 	gflops[0] /= count;
 	gflops[1] /= count;
-	printf("%u, %u: %f, %f, %f\n", n, count, gflops[0], gflops[1], gflops[0] - gflops[1]);
+	printf("%u, %u: %f, %f, %f\n", n, count, gflops[0], gflops[1], gflops[1] - gflops[0]);
 
 	return(0);
 error0:
