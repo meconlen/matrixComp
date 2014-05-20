@@ -8,6 +8,7 @@ AC_PROG_CXX([g++-mp-4.8 g++])
 AC_PROG_CC([gcc-mp-4.8 gcc])
 AC_HEADER_STDC
 
+CFLAGS="$CFLAGS -O3"
 case $host_os in
 	darwin* )
 		CFLAGS="$CFLAGS -I/opt/local/include"
@@ -36,11 +37,18 @@ AC_SEARCH_LIBS([CU_initialize_registry], [cunit], [
 ], [
 	echo "libcunit not found"; exit -1
 ])
+
+AC_SEARCH_LIBS([clock_getres], [rt], [
+	AC_DEFINE([HAVE_CLOCK_GETRES], 1)
+], [
+	AC_DEFINE([HAVE_CLOCK_GETRES], 0)
+])
 AC_CHECK_HEADERS([stdio.h])
 AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([malloc.h])
 AC_CHECK_HEADERS([sys/malloc.h])
 AC_CHECK_HEADERS([malloc/malloc.h])
+AC_CHECK_HEADERS([time.h])
 AC_FUNC_MALLOC
 AC_FUNC_MMAP
 AC_CHECK_FUNCS([fstat])
