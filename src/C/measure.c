@@ -16,12 +16,12 @@ int main(int argc, char *argv[], char *envp[])
 	double 			gflops = 0;
 	int 			i, j;
 	unsigned int	start = 1, end = 1, skip = 1, count = 1;
-	unsigned int	size = 1, algorithm = 1;
+	unsigned int	size = 1, algorithm = 1, debug = 0;
 	char 			c;
 
 	struct rusage 	ruStart, ruEnd;
 
-	while((c = getopt(argc, argv, "c:s:e:j:a:")) != -1)
+	while((c = getopt(argc, argv, "c:s:e:j:a:d:")) != -1)
 		switch(c) {
 			case 's': 
 				start = atoll(optarg);
@@ -37,6 +37,9 @@ int main(int argc, char *argv[], char *envp[])
 				break;
 			case 'a':
 				algorithm = atoll(optarg);
+				break;
+			case 'd':
+				debug = atoll(optarg);
 				break;
 			default:
 				goto error0;
@@ -63,6 +66,13 @@ int main(int argc, char *argv[], char *envp[])
 			}
 
 			getrusage(RUSAGE_SELF, &ruEnd);
+			if(debug > 0) {
+				fprintf(stderr, "size = %d, alg = %d, start = %f, end = %f\n",
+					size, algorithm, 
+					ruStart.ru_utime.tv_sec + (double)(ruStart.ru_utime.tv_usec)/1000000,
+					ruEnd.ru_utime.tv_sec + (double)(ruEnd.ru_utime.tv_usec)/1000000
+				);
+			}
 			elapsed =  ruEnd.ru_utime.tv_sec;
 			elapsed += (double)ruEnd.ru_utime.tv_usec / 1000000;
 			elapsed -= ruStart.ru_utime.tv_sec;
