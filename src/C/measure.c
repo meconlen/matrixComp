@@ -13,9 +13,7 @@
 	#endif
 #endif
 
-
 #include <sys/resource.h>
-
 
 #include "matrix.h"
 
@@ -30,7 +28,8 @@ int main(int argc, char *argv[], char *envp[])
 	unsigned int	size = 1, algorithm = 1, debug = 0;
 	char 			c;
 
-	struct rusage 	ruStart, ruEnd;
+	struct timespec 	startTime, endTime;
+	struct rusage 		ruStart, ruEnd;
 
 	while((c = getopt(argc, argv, "c:s:e:j:a:d:")) != -1)
 		switch(c) {
@@ -69,7 +68,13 @@ int main(int argc, char *argv[], char *envp[])
 				A[k] = drand48();
 				B[k] = drand48();
 			}
+#ifdef HAVE_CLOCK_GETTIME
+			clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &startTime);
+#else
 			getrusage(RUSAGE_SELF, &ruStart);
+			startTime.tv_sec = ruStart.ru_utime.tv_sec + ruStart.ru_stime.tv_sec;
+			startTime.tv_nsec = (ruStart.ru_utime.tv_usec + ruStart.ru_stime.tv_usec)*1000;
+#endif
 			switch(algorithm) {
 				case 1:
 					dMM(A, B, C, size, size, size);
@@ -79,18 +84,23 @@ int main(int argc, char *argv[], char *envp[])
 					break;
 			}
 
+#ifdef HAVE_CLOCK_GETTIME
+			clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &endTime);
+#else
 			getrusage(RUSAGE_SELF, &ruEnd);
-
-			elapsed =  ruEnd.ru_utime.tv_sec;
-			elapsed += (double)ruEnd.ru_utime.tv_usec / 10e6;
-			elapsed -= ruStart.ru_utime.tv_sec;
-			elapsed -= (double)ruStart.ru_utime.tv_usec / 10e6;
+			endTime.tv_sec = ruEnd.ru_utime.tv_sec + ruEnd.ru_stime.tv_sec;
+			endTime.tv_nsec = (ruEnd.ru_utime.tv_usec + ruEnd.ru_stime.tv_usec) * 1000;
+#endif
+			elapsed =  endTime.tv_sec;
+			elapsed += (double)endTime.tv_nsec / 10e9;
+			elapsed -= startTime.tv_sec;
+			elapsed -= (double)startTime.tv_nsec / 10e9;
 			totalElapsed += elapsed;
 			if(debug > 0) {
 				fprintf(stderr, "size = %d, alg = %d, start = %f, end = %f, elapsed = %f, Gops = %f\n",
 					size, algorithm, 
-					ruStart.ru_utime.tv_sec + (double)(ruStart.ru_utime.tv_usec)/10e6,
-					ruEnd.ru_utime.tv_sec + (double)(ruEnd.ru_utime.tv_usec)/10e6,
+					startTime.tv_sec + (double)(startTime.tv_nsec)/1e9,
+					endTime.tv_sec + (double)(endTime.tv_nsec)/1e9,
 					elapsed, (double)2.0*size*size*size/10e9
 				);
 			}
