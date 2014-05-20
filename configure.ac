@@ -49,7 +49,7 @@ AC_CHECK_HEADERS([time.h])
 AC_FUNC_MALLOC
 AC_FUNC_MMAP
 AC_CHECK_FUNCS([fstat])
-AC_CHECK_FUNCS([clock_getres])
+AC_CHECK_FUNCS([clock_getres clock_gettime clock_settime])
 AC_CONFIG_FILES([Makefile
 	src/Makefile
 	src/C/Makefile])
