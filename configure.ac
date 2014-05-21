@@ -8,7 +8,7 @@ AC_PROG_CXX([g++-mp-4.8 g++])
 AC_PROG_CC([gcc-mp-4.8 gcc])
 AC_HEADER_STDC
 
-CFLAGS="$CFLAGS -O3 -march=native"
+CFLAGS="$CFLAGS -O3 -funroll-loops -mfpmath=sse -mbmi2"
 CPPFLAGS="$CPPFLAGS -O3"
 case $host_os in
 	darwin* )
@@ -17,6 +17,7 @@ case $host_os in
 		LDFLAGS="$LDFLAGS -L/opt/local/lib"
 		;;
 	linux*)
+		CFLAGS="-march=native -mavx2 $CFLAGS"
 		# Do something specific for linux
 		;;
 	*BSD*)
