@@ -8,7 +8,7 @@ AC_PROG_CXX([g++-mp-4.8 g++])
 AC_PROG_CC([gcc-mp-4.8 gcc])
 AC_HEADER_STDC
 
-CFLAGS="$CFLAGS -O3"
+CFLAGS="$CFLAGS -O3 -march=native"
 CPPFLAGS="$CPPFLAGS -O3"
 case $host_os in
 	darwin* )
