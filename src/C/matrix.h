@@ -15,6 +15,9 @@ void unit_matrix2X2(void);
 void unit_matrix2X3X4(void);
 void unit_matrix_dMMT(void);
 void unit_matrix_dMMT2(void);
+void unit_matrix_MA(void);
+void unit_matrix_strassenMM2n2(void);
+void unit_matrix_strassenMM2n4(void);
 
 /* matrix multiplication */
 /* C=A*B */
@@ -26,6 +29,10 @@ void unit_matrix_dMMT2(void);
 int dMM(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p);
 int dMMT(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p);
 int dMMT2(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p);
+inline int MA(double *A, double *B, double *C, uint64_t M, uint64_t N);
+inline int MS(double *A, double *B, double *C, uint64_t M, uint64_t N);
+int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t P);
+
 void printMatrix(double *A, uint64_t m, uint64_t n);
 
 #endif

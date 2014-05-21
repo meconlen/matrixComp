@@ -129,14 +129,94 @@ void unit_matrix_dMMT2(void)
 	return;
 }
 
-void unit_strassenMM(void)
+void unit_matrix_MA(void)
+{
+	double A[3][4] = {
+		{1, 2, 3, 4},
+		{5, 6, 7, 8},
+		{9, 10, 11, 12}
+	};	
+	double B[3][4] = {
+		{13, 14, 15, 16},
+		{17, 18, 19, 20},
+		{21, 22, 23, 24}
+	};
+	double C[3][4];
+	int rc;
+
+	rc = MA((double *)A, (double *)B, (double *)C, 3, 4);
+	CU_ASSERT(rc == 0);
+	CU_ASSERT(C[0][0] == 14);
+	CU_ASSERT(C[0][1] == 16);
+	CU_ASSERT(C[0][2] == 18);
+	CU_ASSERT(C[0][3] == 20);
+	CU_ASSERT(C[1][0] == 22);
+	CU_ASSERT(C[1][1] == 24);
+	CU_ASSERT(C[1][2] == 26);
+	CU_ASSERT(C[1][3] == 28);
+	CU_ASSERT(C[2][0] == 30);
+	CU_ASSERT(C[2][1] == 32);
+	CU_ASSERT(C[2][2] == 34);
+	CU_ASSERT(C[2][3] == 36);
+
+}
+
+void unit_matrix_strassenMM2n2(void)
 {
 	uint64_t 	x, i;
-	int 		rc;
 
-	rc = strassenMM(NULL, NULL, NULL, 14);
+	double A[2][2] = {
+		{ 1, 2 },
+		{ 3, 4 }
+	};
+	double B[2][2] = {
+		{ 5, 6 },
+		{ 7, 8 }
+	};
+	double C[2][2];
+	int rc;
+
+	rc = strassenMM2n((double *)A, (double *)B, (double *)C, 2);
+	CU_ASSERT(rc == 0);
+	CU_ASSERT(C[0][0] == 19);
+	CU_ASSERT(C[0][1] == 22);
+	CU_ASSERT(C[1][0] == 43);
+	CU_ASSERT(C[1][1] == 50);
+
+	rc = strassenMM2n(NULL, NULL, NULL, 14);
+	// printf("\n");
+	// printMatrix((double *)C, 2, 2);
 	CU_ASSERT(rc == -1);
 
+}
+
+void unit_matrix_strassenMM2n4(void)
+{
+	double A[4][4] = {
+		{ 1, 2, 3, 4},
+		{ 5, 6, 7, 8},
+		{ 9, 10, 11, 12},
+		{13, 14, 15, 16}
+	};
+	double B[4][4] = {
+		{17, 18, 19, 20},
+		{21, 22, 23, 24},
+		{25, 26, 27, 28},
+		{29, 30, 31, 32}
+	};
+	double C1[4][4], C2[4][4], T[4][4];
+	int rc, i, j;
+	dMM((double *)A, (double *)B, (double *)C1, 4, 4, 4);
+	strassenMM2n((double *)A, (double *)B, (double *)C2, 4);
+	for(i=0; i<4; i++) {
+		for(j=0; j<4; j++) {
+			CU_ASSERT(C1[i][j] == C2[i][j]);
+		}
+	}
+	MS(C1, C2, T, 4, 4);
+	// printf("\n");
+	// printMatrix((double *)T, 4, 4);
+	return;
 }
 
 int dMM(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
@@ -204,16 +284,159 @@ inline int powerOfTwo(uint64_t x)
 	return( (x != 0) && ( ( (~x +1) & x) == x) );
 }
 
-int strassenMM(double *A, double *B, double *C, uint64_t m)
+inline int MA(double *A, double *B, double *C, uint64_t M, uint64_t N)
 {
-	if(! powerOfTwo(m)) return(-1);
-
-	if(m == 2) {
-
+	uint64_t	m, n;
+	for(m=0; m<M; m++) {
+		for(n=0; n<N; n++) {
+			C[m*N+n] = A[m*N+n] + B[m*N+n];
+		}
 	}
-
 	return(0);
 }
+
+inline int MS(double *A, double *B, double *C, uint64_t M, uint64_t N)
+{
+	uint64_t	m, n;
+	for(m=0; m<M; m++) {
+		for(n=0; n<N; n++) {
+			C[m*N+n] = A[m*N+n] - B[m*N+n];
+		}
+	}
+	return(0);
+}
+
+int strassenMM2n(double *A, double *B, double *C, uint64_t M)
+{
+	double D[7];
+	double *A1, *A2, *A3, *A4, *B1, *B2, *B3, *B4, *C1, *C2, *C3, *C4;
+	double *D0, *D1, *D2, *D3, *D4, *D5, *D6, *D7, *T1, *T2;
+	uint64_t N, i, j;
+
+	if(! powerOfTwo(M)) return(-1);
+
+	if(M == 2) {
+		D[0] = (A[0] + A[3])*(B[0]+B[3]); 
+		D[1] = (A[2] + A[3])*B[0]; 
+		D[2] = (A[0])*(B[1] - B[3]); 
+		D[3] = A[3]*(B[2] - B[0]); 
+		D[4] = (A[0] + A[1])*B[3];
+		D[5] = (A[2] - A[0])*(B[0] + B[1]); 
+		D[6] = (A[1] - A[3])*(B[2] + B[3]);
+		C[0] = D[0] + D[3] - D[4] + D[6];
+		C[1] = D[2] + D[4];
+		C[2] = D[1] + D[3];
+		C[3] = D[0] - D[1] + D[2] + D[5];
+		return(0);
+	}
+
+	N = M/2;
+	A1 = malloc(sizeof(double)*N*N);
+	A2 = malloc(sizeof(double)*N*N);
+	A3 = malloc(sizeof(double)*N*N);
+	A4 = malloc(sizeof(double)*N*N);
+	B1 = malloc(sizeof(double)*N*N);
+	B2 = malloc(sizeof(double)*N*N);
+	B3 = malloc(sizeof(double)*N*N);
+	B4 = malloc(sizeof(double)*N*N);
+	C1 = malloc(sizeof(double)*N*N);
+	C2 = malloc(sizeof(double)*N*N);
+	C3 = malloc(sizeof(double)*N*N);
+	C4 = malloc(sizeof(double)*N*N);
+	D1 = malloc(sizeof(double)*N*N);
+	D2 = malloc(sizeof(double)*N*N);
+	D3 = malloc(sizeof(double)*N*N);
+	D4 = malloc(sizeof(double)*N*N);
+	D5 = malloc(sizeof(double)*N*N);
+	D6 = malloc(sizeof(double)*N*N);
+	D7 = malloc(sizeof(double)*N*N);
+	T1 = malloc(sizeof(double)*N*N);
+	T2 = malloc(sizeof(double)*N*N);
+	for(i=0; i<N; i++) {
+		for(j=0; j<N; j++) {
+			A1[i*N+j] = A[(i*N*N) + j];
+			A2[i*N+j] = A[(i*N*N) + (N+j)];
+			A3[i*N+j] = A[((i+N)*N*N) + j];
+			A4[i*N+j] = A[((i+N)*N*N) + (N+j)];
+			B1[i*N+j] = B[(i*N*N) + j];
+			B2[i*N+j] = B[(i*N*N) + (N+j)];
+			B3[i*N+j] = B[((i+N)*N*N) + j];
+			B4[i*N+j] = B[((i+N)*N*N) + (N+j)];
+		}
+	}
+	/* D1 */
+	MA(A1, A4, T1, N, N);
+	MA(B1, B4, T2, N, N);
+	strassenMM2n(T1, T2, D1, N);
+	/* D2 */
+	MA(A3, A4, T1, N, N);
+	strassenMM2n(T1, B1, D2, N);
+	/* D3 */
+	MS(B2, B4, T1, N, N);
+	strassenMM2n(A1, T1, D3, N);
+	/*D4 */
+	MS(B3, B1, T1, N, N);
+	strassenMM2n(A4, T1, D4, N);
+	/* D5 */
+	MA(A1, A2, T1, N, N);
+	strassenMM2n(T1, B4, D5, N);
+	/* D6 */
+	MS(A3, A1, T1, N, N);
+	MA(B1, B2, T2, N, N);
+	strassenMM2n(T1, T2, D6, N);
+	/* D7 */
+	MS(A2, A4, T1, N, N);
+	MA(B3, B4, T2, N, N);
+	strassenMM2n(T1, T2, D7, N);
+	/* C1 */
+	MA(D1, D4, T1, N, N);
+	MA(T1, D7, T2, N, N);
+	MS(T2, D5, C1, N, N);
+	/* C2 */
+	MA(D3, D5, C2, N, N);
+	/* C3 */
+	MA(D2, D4, C3, N, N);
+	/* C4 */
+	MS(D1, D2, T1, N, N);
+	MA(D3, D6, T2, N, N);
+	MA(T1, T2, C4, N, N);
+
+	for(i=0; i<N; i++) {
+		for(j=0; j<N; j++) {
+			C[(i*N*N)+j] = C1[i*N+j];
+			C[(i*N*N)+(j+N)] = C2[i*N+j];
+			C[((i+N)*N*N)+j] = C3[i*N+j];
+			C[((i+N)*N*N)+(j+N)] = C4[i*N+j];
+		}
+	}
+	free(A1);
+	free(A2);
+	free(A3);
+	free(A4);
+	free(B1);
+	free(B2);
+	free(B3);
+	free(B4);
+	free(C1);
+	free(C2);
+	free(C3);
+	free(C4);
+	free(D1);
+	free(D2);
+	free(D3);
+	free(D4);
+	free(D5);
+	free(D6);
+	free(D7);
+	free(T1);
+	free(T2);
+	return(0);
+}
+
+// int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t P)
+// {
+// 	return;	
+// }
 
 void printMatrix(double *A, uint64_t m, uint64_t n)
 {
