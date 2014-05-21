@@ -213,7 +213,7 @@ void unit_matrix_strassenMM2n4(void)
 			CU_ASSERT(C1[i][j] == C2[i][j]);
 		}
 	}
-	MS(C1, C2, T, 4, 4);
+	MS((double *)C1, (double *)C2, (double *)T, 4, 4);
 	// printf("\n");
 	// printMatrix((double *)T, 4, 4);
 	return;
