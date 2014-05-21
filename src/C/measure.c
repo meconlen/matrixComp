@@ -101,14 +101,14 @@ int main(int argc, char *argv[], char *envp[])
 					size, algorithm, 
 					startTime.tv_sec + (double)(startTime.tv_nsec)/1e9,
 					endTime.tv_sec + (double)(endTime.tv_nsec)/1e9,
-					elapsed, (double)2.0*size*size*size/10e9
+					elapsed, ((double)2.0*size*size*size-size*size)/10e9
 				);
 			}
 			free(A);
 			free(B);
 			free(C);		
 		}
-		gflops = (((double)2.0*size*size*size*count)/10e9)/totalElapsed;
+		gflops = ((((double)2.0*size*size*size-size*size))/10e9)/totalElapsed;
 		printf("%u %u %f\n", size, count, gflops);
 	}
 	return(0);

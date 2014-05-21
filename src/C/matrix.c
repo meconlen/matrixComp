@@ -128,6 +128,7 @@ int dMMT(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
 			B2[j*n+i] = B[i*p+j];
 		}
 	}
+	memset(C, 0, m*p*sizeof(double));
 	for(i=0; i<m; i++) {
 		for(j=0; j<p; j++) {
 			for(k=0; k<n; k++) {
@@ -138,6 +139,20 @@ int dMMT(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
 	free(B2);
 	return(0);
 }
+
+// int dMMT2(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
+// {
+// 	uint64_t	i, j, k;
+
+// 	for(i=0; i<n; i++) {
+// 		for(j=0; j<p; j++) {
+// 			for(k=0; k<m; k++) {
+// 				C[]
+// 			}
+// 		}
+// 	}
+// }
+
 
 void printMatrix(double *A, uint64_t m, uint64_t n)
 {
