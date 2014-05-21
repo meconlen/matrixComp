@@ -86,7 +86,7 @@ void unit_matrix_dMMT(void)
 	double C[2][4];
 	int rc;	
 
-	rc = dMM((double *)A, (double *)B, (double *)C, 2, 3, 4);
+	rc = dMMT((double *)A, (double *)B, (double *)C, 2, 3, 4);
 	CU_ASSERT(rc == 0);
 	CU_ASSERT(C[0][0] == 38);
 	CU_ASSERT(C[0][1] == 44);
@@ -99,6 +99,46 @@ void unit_matrix_dMMT(void)
 
 	return;
 }
+
+void unit_matrix_dMMT2(void)
+{
+	double A[2][3] = {
+		{1, 2, 3},
+		{4, 5, 6}
+	};
+	double B[3][4] = {
+		{1, 2, 3, 4},
+		{5, 6, 7, 8},
+		{9, 10, 11, 12}
+	};
+	double C[2][4];
+	int rc;	
+
+	rc = dMMT2((double *)A, (double *)B, (double *)C, 2, 3, 4);
+	CU_ASSERT(rc == 0);
+	CU_ASSERT(C[0][0] == 38);
+	CU_ASSERT(C[0][1] == 44);
+	CU_ASSERT(C[0][2] == 50);
+	CU_ASSERT(C[0][3] == 56);
+	CU_ASSERT(C[1][0] == 83);
+	CU_ASSERT(C[1][1] == 98);
+	CU_ASSERT(C[1][2] == 113);
+	CU_ASSERT(C[1][3] == 128);
+	// printf("\n");
+	// printMatrix((double *)C, 2, 4);
+	return;
+}
+
+void unit_strassenMM(void)
+{
+	uint64_t 	x, i;
+	int 		rc;
+
+	rc = strassenMM(NULL, NULL, NULL, 14);
+	CU_ASSERT(rc == -1);
+
+}
+
 int dMM(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
 {
 	uint64_t	i, j, k;
@@ -140,19 +180,40 @@ int dMMT(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
 	return(0);
 }
 
-// int dMMT2(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
-// {
-// 	uint64_t	i, j, k;
+/* A[m][n] * B[n][p] */
+int dMMT2(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
+{
+	uint64_t	i, j, k;
 
-// 	for(i=0; i<n; i++) {
-// 		for(j=0; j<p; j++) {
-// 			for(k=0; k<m; k++) {
-// 				C[]
-// 			}
-// 		}
-// 	}
-// }
+	memset(C, 0, m*p*sizeof(double));
+	for(i=0; i<m; i++) { /* A row */
+		for(j=0; j<n; j++) { /* A col, B row */
+			for(k=0; k<p; k++) { /* B col */
 
+				/* so C has m(k) rows and p(j) columns */
+				/* computing on row k and column i*/
+				/* C[k][j] += A[k][i] * B[i][j] */ 
+				C[p*i+k] += A[n*i+j] * B[p*j+k];
+			}
+		}
+	}
+}
+
+inline int powerOfTwo(uint64_t x)
+{
+	return( (x != 0) && ( ( (~x +1) & x) == x) );
+}
+
+int strassenMM(double *A, double *B, double *C, uint64_t m)
+{
+	if(! powerOfTwo(m)) return(-1);
+
+	if(m == 2) {
+
+	}
+
+	return(0);
+}
 
 void printMatrix(double *A, uint64_t m, uint64_t n)
 {

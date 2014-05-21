@@ -82,6 +82,9 @@ int main(int argc, char *argv[], char *envp[])
 				case 2:
 					dMMT(A, B, C, size, size, size);
 					break;
+				case 3:
+					dMMT2(A, B, C, size, size, size);
+					break;
 			}
 
 #ifdef HAVE_CLOCK_GETTIME

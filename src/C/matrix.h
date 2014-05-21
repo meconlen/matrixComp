@@ -14,6 +14,7 @@ int clean_matrixSuite(void);
 void unit_matrix2X2(void);
 void unit_matrix2X3X4(void);
 void unit_matrix_dMMT(void);
+void unit_matrix_dMMT2(void);
 
 /* matrix multiplication */
 /* C=A*B */
