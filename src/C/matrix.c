@@ -549,10 +549,15 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 	} else {
 		memcpy(C11, T11a, partitionSize * partitionSize);
 	}
+
 	if(P > partitionSize) {
 		strassenMM(A11, B12, T12a, partitionSize, partitionSize, (P - partitionSize));
-		strassenMM(A12, B22, T12b, partitionSize, (N-partitionSize), (P - partitionSize));
-		MA(T12a, T12b, C12, partitionSize, (P - partitionSize));
+		if(N > partitionSize) {
+			strassenMM(A12, B22, T12b, partitionSize, (N-partitionSize), (P - partitionSize));
+			MA(T12a, T12b, C12, partitionSize, (P - partitionSize));
+		} else {
+			memcpy(C12, T12a, partitionSize * (P - partitionSize));
+		}
 	}
 
 	if(M > partitionSize) {
