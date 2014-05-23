@@ -479,8 +479,12 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 	t = M < N ? M : N;
 	minMNP = t < P ? t : P;
 
+printf("\n");
+printf(" t = %" PRIu64 " \n", t);
+printf(" minMNP = %" PRIu64 " \n", minMNP);
+
 	partitionSize = pow(2, floor(log2(minMNP)));
-printf("\nM = %" PRIu64 " N = % " PRIu64 " P = %d min = % " PRIu64 " partition = %" PRIu64 "\n", M, N, P, minMNP);
+printf("\nM = %" PRIu64 " N = % " PRIu64 " P = %" PRIu64 " min = % " PRIu64 "\n", M, N, P, minMNP);
 printf("partitionSize = %" PRIu64 "\n", partitionSize);
 	if(M == N && N == P && P == partitionSize) {
 		strassenMM2n(A11, B11, C, partitionSize);
