@@ -330,7 +330,7 @@ void unit_matrix_strassenMMVariable(void)
 			for(k=1; k<=20; k++) {
 				dMM((double *)A, (double *)B, (double *)C1, i, j, k);
 				strassenMM((double *)A, (double *)B, (double *)C2, i, j, k);				
-				for(l=0; k<i*k; l++) { 
+				for(l=0; l<i*k; l++) { 
 					if(C1[l] != C2[l]) {
 						sprintf(error, "error on i = %" PRIu64 ", j = %" PRIu64 ", k = %" PRIu64 ", on l = %" PRIu64 "\n",
 							i, j, k, l);
