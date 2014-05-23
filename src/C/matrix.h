@@ -18,6 +18,7 @@ void unit_matrix_dMMT2(void);
 void unit_matrix_MA(void);
 void unit_matrix_strassenMM2n2(void);
 void unit_matrix_strassenMM2n4(void);
+void unit_matrix_strassenMM4X4(void);
 
 /* matrix multiplication */
 /* C=A*B */
