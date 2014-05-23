@@ -320,13 +320,23 @@ void unit_matrix_strassenMMVariable(void)
 	uint64_t 	i, j, k,l;
 	char 		error[1000];
 
+	uint64_t 	M, N, P;
+
 	for(i=0; i<400; i++) {
 		A[i] = i;
 		B[i] = i*i;
 	}
 
-	strassenMM((double *)A, (double *)B, (double *)C2, 8, 8, 9);
+	M = 4;
+	N = 4; 
+	P = 5;
 
+	dMM((double *)A, (double *)B, (double *)C1, M, N, P);
+	strassenMM((double *)A, (double *)B, (double *)C2, M, N, P);
+	printf("\nC1 = \n");
+	printMatrix((double *)C1, M, P);
+	printf("\nC2 = \n");
+	printMatrix((double *)C2, M, P);
 
 	// for(i=1; i<=20; i++) {
 	// 	for(j=1; j<=20; j++) {
@@ -573,14 +583,21 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 	double 		*T11a, *T12a, *T21a, *T22a;
 	double 		*T11b, *T12b, *T21b, *T22b;
 
-// printf("strassenMM with M = %" PRIu64 " N = %" PRIu64 " P = %" PRIu64 "\n", M, N, P);
+printf("strassenMM with M = %" PRIu64 " N = %" PRIu64 " P = %" PRIu64 "\n", M, N, P);
 	t = M < N ? M : N;
 	minMNP = t < P ? t : P;
 
 	partitionSize = pow(2, floor(log2(minMNP)));
 	if(partitionSize < 4) {
-		// printf("Calling dMMT2()\n");
+		printf("Calling dMMT2() on M = %" PRIu64 ", N = %" PRIu64 ", P = %" PRIu64 "\n", M, N, P);
 		dMMT2(A, B, C, M, N, P);
+		printf("\nA = \n");
+		printMatrix((double *)A, M, N);
+		printf("\nB = \n");
+		printMatrix((double *)B, N, P);
+		printf("\nC = \n");
+		printMatrix((double *)C, M, P);
+
 		return(0);
 	}
 	if(M == N && N == P && P == partitionSize) {
