@@ -221,6 +221,31 @@ void unit_matrix_strassenMM2n4(void)
 	return;
 }
 
+void unit_matrix_strassenMM1X1(void)
+{
+	double A[1][1] = {
+		{ 2 }
+	};
+	double B[1][1] = {
+		{ 17 }
+	};
+	double C1[1][1], C2[1][1], T[1][1];
+	int rc, i, j;
+	dMM((double *)A, (double *)B, (double *)C1, 1, 1, 1);
+	strassenMM((double *)A, (double *)B, (double *)C2, 1, 1, 1);
+	for(i=0; i<1; i++) {
+		for(j=0; j<1; j++) {
+			CU_ASSERT(C1[i][j] == C2[i][j]);
+		}
+	}
+	MS((double *)C1, (double *)C2, (double *)T, 1, 1);
+	// printf("\nC1 = \n");
+	// printMatrix((double *)C1, 1, 1);
+	// printf("\nC2 = \n");
+	// printMatrix((double *)C2, 1, 1);
+	return;
+}
+
 void unit_matrix_strassenMM4X4(void)
 {
 	double A[4][4] = {
@@ -281,12 +306,43 @@ void unit_matrix_strassenMM5X7X9(void)
 	}
 	MS((double *)C1, (double *)C2, (double *)T, 5, 9);
 	// printf("\nC1 = \n");
-	// printMatrix((double *)C1, 4, 4);
+	// printMatrix((double *)C1, 5, 9);
 	// printf("\nC2 = \n");
-	// printMatrix((double *)C2, 4, 4);
+	// printMatrix((double *)C2, 5, 9);
 	return;
 }
 
+
+void unit_matrix_strassenMMVariable(void)
+{
+
+	double 	A[20*20], B[20*20], C1[20*20], C2[20*20];
+	int 	i, j, k,l;
+	char 	error[1000];
+
+	for(i=0; i<400; i++) {
+		A[i] = i;
+		B[i] = i*i;
+	}
+
+	for(i=1; i<=20; i++) {
+		for(j=1; j<=20; j++) {
+			for(k=1; k<=20; k++) {
+				dMM((double *)A, (double *)B, (double *)C1, i, j, k);
+				strassenMM((double *)A, (double *)B, (double *)C2, i, j, k);				
+				for(l=0; k<i*k; l++) { 
+					if(C1[l] != C2[l]) {
+						sprintf(error, "error on i = %" PRIu64 ", j = %" PRIu64 ", k = %" PRIu64 ", on l = %" PRIu64 "\n",
+							i, j, k, l);
+						CU_FAIL("error")
+					}
+				}
+			}
+		}
+	}
+
+	return;
+}
 
 int dMM(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
 {
@@ -512,10 +568,16 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 	double 		*T11a, *T12a, *T21a, *T22a;
 	double 		*T11b, *T12b, *T21b, *T22b;
 
+// printf("strassenMM with M = %" PRIu64 " N = %" PRIu64 " P = %" PRIu64 "\n", M, N, P);
 	t = M < N ? M : N;
 	minMNP = t < P ? t : P;
 
 	partitionSize = pow(2, floor(log2(minMNP)));
+	if(partitionSize < 4) {
+		// printf("Calling dMMT2()\n");
+		dMMT2(A, B, C, M, N, P);
+		return(0);
+	}
 	if(M == N && N == P && P == partitionSize) {
 		strassenMM2n(A, B, C, partitionSize);
 		return(0);
@@ -570,10 +632,14 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 		}
 	}
 
-	if(M > partitionSize && N > partitionSize) {
+	if(M > partitionSize && P > partitionSize) {
 		strassenMM(A21, B12, T22a, (M-partitionSize), partitionSize, (P - partitionSize));
-		strassenMM(A22, B22, T22b, (M-partitionSize), (N - partitionSize), (P - partitionSize));
-		MA(T22a, T22b, C22, (M-partitionSize), (P - partitionSize));
+		if(N > partitionSize) {
+			strassenMM(A22, B22, T22b, (M-partitionSize), (N - partitionSize), (P - partitionSize));
+			MA(T22a, T22b, C22, (M-partitionSize), (P - partitionSize));
+		} else {
+			memcpy(C22, T22a, (M-partitionSize)*(P - partitionSize));
+		}
 	}
 
 	for(i=0; i<partitionSize; i++) {

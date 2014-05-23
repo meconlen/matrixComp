@@ -19,8 +19,10 @@ int main(int argc, char *argv[], char *envp[])
 	if((CU_add_test(matrixSuite, "matrix_MA()", unit_matrix_MA)) == NULL) goto error1;
 	if((CU_add_test(matrixSuite, "matrix_strassenMM2n2()", unit_matrix_strassenMM2n2)) == NULL) goto error1;
 	if((CU_add_test(matrixSuite, "matrix_strassenMM2n4()", unit_matrix_strassenMM2n4)) == NULL) goto error1;
+	if((CU_add_test(matrixSuite, "matrix_strassenMM1X1()", unit_matrix_strassenMM1X1)) == NULL) goto error1;
 	if((CU_add_test(matrixSuite, "matrix_strassenMM4X4()", unit_matrix_strassenMM4X4)) == NULL) goto error1;
-	if((CU_add_test(matrixSuite, "matrix_strassenMM5X7X9()", unit_matrix_strassenMM5X7X9)) == NULL) goto error1;
+//	if((CU_add_test(matrixSuite, "matrix_strassenMM5X7X9()", unit_matrix_strassenMM5X7X9)) == NULL) goto error1;
+	if((CU_add_test(matrixSuite, "matrix_strassenMMVariable()", unit_matrix_strassenMMVariable)) == NULL) goto error1;
 	CU_basic_set_mode(CU_BRM_VERBOSE);
 	CU_basic_run_tests();
 	return(0);
@@ -33,3 +35,4 @@ error0:
 	fprintf(stderr, "test setup error\n");
 	exit(CU_get_error());
 }
+

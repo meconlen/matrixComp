@@ -18,8 +18,10 @@ void unit_matrix_dMMT2(void);
 void unit_matrix_MA(void);
 void unit_matrix_strassenMM2n2(void);
 void unit_matrix_strassenMM2n4(void);
+void unit_matrix_strassenMM1X1(void);
 void unit_matrix_strassenMM4X4(void);
 void unit_matrix_strassenMM5X7X9(void);
+void unit_matrix_strassenMMVariable(void);
 
 /* matrix multiplication */
 /* C=A*B */
