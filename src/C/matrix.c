@@ -317,7 +317,7 @@ void unit_matrix_strassenMMVariable(void)
 {
 
 	double 		A[20*20], B[20*20], C1[20*20], C2[20*20];
-	uint64_T 	i, j, k,l;
+	uint64_t 	i, j, k,l;
 	char 		error[1000];
 
 	for(i=0; i<400; i++) {
