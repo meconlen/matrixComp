@@ -484,7 +484,7 @@ printf(" t = %" PRIu64 " \n", t);
 printf(" minMNP = %" PRIu64 " \n", minMNP);
 
 	partitionSize = pow(2, floor(log2(minMNP)));
-printf("\nM = %" PRIu64 " N = %" PRIu64 " P = %" PRIu64 " min = % " PRIu64 "\n", M, N, P, minMNP);
+printf("\nM = %" PRIu64 " N = %" PRIu64 " P = %" PRIu64 " min = %" PRIu64 "\n", M, N, P, minMNP);
 printf("partitionSize = %" PRIu64 "\n", partitionSize);
 	if(M == N && N == P && P == partitionSize) {
 		strassenMM2n(A11, B11, C, partitionSize);
