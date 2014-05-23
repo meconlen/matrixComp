@@ -20,7 +20,7 @@ int main(int argc, char *argv[], char *envp[])
 	if((CU_add_test(matrixSuite, "matrix_strassenMM2n2()", unit_matrix_strassenMM2n2)) == NULL) goto error1;
 	if((CU_add_test(matrixSuite, "matrix_strassenMM2n4()", unit_matrix_strassenMM2n4)) == NULL) goto error1;
 	if((CU_add_test(matrixSuite, "matrix_strassenMM4X4()", unit_matrix_strassenMM4X4)) == NULL) goto error1;
-
+	if((CU_add_test(matrixSuite, "matrix_strassenMM5X7X9()", unit_matrix_strassenMM5X7X9)) == NULL) goto error1;
 	CU_basic_set_mode(CU_BRM_VERBOSE);
 	CU_basic_run_tests();
 	return(0);

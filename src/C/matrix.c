@@ -245,12 +245,48 @@ void unit_matrix_strassenMM4X4(void)
 		}
 	}
 	MS((double *)C1, (double *)C2, (double *)T, 4, 4);
-	printf("\nC1 = \n");
-	printMatrix((double *)C1, 4, 4);
-	printf("\nC2 = \n");
-	printMatrix((double *)C2, 4, 4);
+	// printf("\nC1 = \n");
+	// printMatrix((double *)C1, 4, 4);
+	// printf("\nC2 = \n");
+	// printMatrix((double *)C2, 4, 4);
 	return;
 }
+
+void unit_matrix_strassenMM5X7X9(void)
+{
+	double A[5][7] = {
+		{ 1, 2, 3, 4, 5},
+		{ 5, 6, 7, 8, 9},
+		{ 9, 10, 11, 12, 13},
+		{13, 14, 15, 16, 17},
+		{17, 18, 19, 20, 21}
+	};
+	double B[7][9] = {
+		{17, 18, 19, 20, 21, 22, 23, 24, 25},
+		{21, 22, 23, 24, 25, 26, 27, 28, 29},
+		{25, 26, 27, 28, 29, 30, 31, 32, 33},
+		{29, 30, 31, 32, 33, 34, 35, 36, 37},
+		{21, 22, 23, 24, 25, 26, 27, 28, 29},
+		{25, 26, 27, 28, 29, 30, 31, 32, 33},
+		{29, 30, 31, 32, 33, 34, 35, 36, 37}
+	};
+	double C1[5][9], C2[5][9], T[5][9];
+	int rc, i, j;
+	dMM((double *)A, (double *)B, (double *)C1, 5, 7, 9);
+	strassenMM((double *)A, (double *)B, (double *)C2, 5, 7, 9);
+	for(i=0; i<5; i++) {
+		for(j=0; j<9; j++) {
+			CU_ASSERT(C1[i][j] == C2[i][j]);
+		}
+	}
+	MS((double *)C1, (double *)C2, (double *)T, 5, 9);
+	// printf("\nC1 = \n");
+	// printMatrix((double *)C1, 4, 4);
+	// printf("\nC2 = \n");
+	// printMatrix((double *)C2, 4, 4);
+	return;
+}
+
 
 int dMM(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
 {
@@ -346,8 +382,8 @@ int strassenMM2n(double *A, double *B, double *C, uint64_t M)
 	double *D0, *D1, *D2, *D3, *D4, *D5, *D6, *D7, *T1, *T2;
 	uint64_t N, i, j;
 
-	if(! powerOfTwo(M)) return(-1);
 
+	if(! powerOfTwo(M)) return(-1);
 	if(M == 2) {
 		D[0] = (A[0] + A[3])*(B[0]+B[3]); 
 		D[1] = (A[2] + A[3])*B[0]; 
@@ -479,15 +515,9 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 	t = M < N ? M : N;
 	minMNP = t < P ? t : P;
 
-printf("\n");
-printf(" t = %" PRIu64 " \n", t);
-printf(" minMNP = %" PRIu64 " \n", minMNP);
-
 	partitionSize = pow(2, floor(log2(minMNP)));
-printf("\nM = %" PRIu64 " N = %" PRIu64 " P = %" PRIu64 " min = %" PRIu64 "\n", M, N, P, minMNP);
-printf("partitionSize = %" PRIu64 "\n", partitionSize);
 	if(M == N && N == P && P == partitionSize) {
-		strassenMM2n(A11, B11, C, partitionSize);
+		strassenMM2n(A, B, C, partitionSize);
 		return(0);
 	}
 
