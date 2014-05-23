@@ -328,6 +328,8 @@ void unit_matrix_strassenMMVariable(void)
 	for(i=1; i<=20; i++) {
 		for(j=1; j<=20; j++) {
 			for(k=1; k<=20; k++) {
+				memset(C1, 0, sizeof(double)*400);
+				memset(C2, 0, sizeof(double)*400);
 				dMM((double *)A, (double *)B, (double *)C1, i, j, k);
 				strassenMM((double *)A, (double *)B, (double *)C2, i, j, k);				
 				for(l=0; l<i*k; l++) { 
