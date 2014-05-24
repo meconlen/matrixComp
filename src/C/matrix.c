@@ -449,6 +449,7 @@ inline int MS(double *A, double *B, double *C, uint64_t M, uint64_t N)
 int strassenMM2n(double *A, double *B, double *C, uint64_t M)
 {
 	double D[7];
+	double *allocation;
 	double *A1, *A2, *A3, *A4, *B1, *B2, *B3, *B4, *C1, *C2, *C3, *C4;
 	double *D0, *D1, *D2, *D3, *D4, *D5, *D6, *D7, *T1, *T2;
 	uint64_t N, i, j;
@@ -470,27 +471,29 @@ int strassenMM2n(double *A, double *B, double *C, uint64_t M)
 	}
 
 	N = M/2;
-	A1 = malloc(sizeof(double)*N*N);
-	A2 = malloc(sizeof(double)*N*N);
-	A3 = malloc(sizeof(double)*N*N);
-	A4 = malloc(sizeof(double)*N*N);
-	B1 = malloc(sizeof(double)*N*N);
-	B2 = malloc(sizeof(double)*N*N);
-	B3 = malloc(sizeof(double)*N*N);
-	B4 = malloc(sizeof(double)*N*N);
-	C1 = malloc(sizeof(double)*N*N);
-	C2 = malloc(sizeof(double)*N*N);
-	C3 = malloc(sizeof(double)*N*N);
-	C4 = malloc(sizeof(double)*N*N);
-	D1 = malloc(sizeof(double)*N*N);
-	D2 = malloc(sizeof(double)*N*N);
-	D3 = malloc(sizeof(double)*N*N);
-	D4 = malloc(sizeof(double)*N*N);
-	D5 = malloc(sizeof(double)*N*N);
-	D6 = malloc(sizeof(double)*N*N);
-	D7 = malloc(sizeof(double)*N*N);
-	T1 = malloc(sizeof(double)*N*N);
-	T2 = malloc(sizeof(double)*N*N);
+	allocation = malloc(sizeof(double)*N*N*21);
+	A1 = allocation;
+	A2 = A1 + N*N;
+	A3 = A2 + N*N;
+	A4 = A3 + N*N;
+	B1 = A4 + N*N;
+	B2 = B1 + N*N;
+	B3 = B2 + N*N;
+	B4 = B3 + N*N;
+	C1 = B4 + N*N;
+	C2 = C1 + N*N;
+	C3 = C2 + N*N;
+	C4 = C3 + N*N;
+	D1 = C4 + N*N;
+	D2 = D1 + N*N;
+	D3 = D2 + N*N;
+	D4 = D3 + N*N;
+	D5 = D4 + N*N;
+	D6 = D5 + N*N;
+	D7 = D6 + N*N;
+	T1 = D7 + N*N;
+	T2 = T1 + N*N;
+	
 	for(i=0; i<N; i++) {
 		for(j=0; j<N; j++) {
 			A1[i*N+j] = A[(M*i) + j];
@@ -550,27 +553,7 @@ int strassenMM2n(double *A, double *B, double *C, uint64_t M)
 		}
 	}
 
-	free(A1);
-	free(A2);
-	free(A3);
-	free(A4);
-	free(B1);
-	free(B2);
-	free(B3);
-	free(B4);
-	free(C1);
-	free(C2);
-	free(C3);
-	free(C4);
-	free(D1);
-	free(D2);
-	free(D3);
-	free(D4);
-	free(D5);
-	free(D6);
-	free(D7);
-	free(T1);
-	free(T2);
+	free(allocation);
 	return(0);
 }
 
