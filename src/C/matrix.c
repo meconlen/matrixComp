@@ -748,9 +748,7 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 	}
 
 	free(allocation);
-
-
-	return;	
+	return(0);	
 }
 
 void printMatrix(double *A, uint64_t m, uint64_t n)

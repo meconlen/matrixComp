@@ -34,8 +34,9 @@ int dMM(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p);
 int dMMT(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p);
 int dMMT2(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p);
 int dMMT2r(double *restrict A, double *restrict B, double *restrict C, uint64_t m, uint64_t n, uint64_t p);
-inline int MA(double *A, double *B, double *C, uint64_t M, uint64_t N);
-inline int MS(double *A, double *B, double *C, uint64_t M, uint64_t N);
+int MA(double *A, double *B, double *C, uint64_t M, uint64_t N);
+int MS(double *A, double *B, double *C, uint64_t M, uint64_t N);
+int strassenMM2n(double *A, double *B, double *C, uint64_t M);
 int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t P);
 
 void printMatrix(double *A, uint64_t m, uint64_t n);
