@@ -36,6 +36,7 @@ int dMMT2(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p);
 int dMMT2r(double *restrict A, double *restrict B, double *restrict C, uint64_t m, uint64_t n, uint64_t p);
 int MA(double *A, double *B, double *C, uint64_t M, uint64_t N);
 int MS(double *A, double *B, double *C, uint64_t M, uint64_t N);
+int powerOfTwo(uint64_t x);
 int strassenMM2n(double *A, double *B, double *C, uint64_t M);
 int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t P);
 
