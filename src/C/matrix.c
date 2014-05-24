@@ -578,6 +578,7 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 {
 	uint64_t	minMNP, t, partitionSize;
 	uint64_t	i, j;
+	double		*allocation;
 	double		*A11, *A12, *A21, *A22;
 	double 		*B11, *B12, *B21, *B22;
 	double 		*C11, *C12, *C21, *C22;
@@ -596,27 +597,50 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 		strassenMM2n(A, B, C, partitionSize);
 		return(0);
 	}
-
-	A11 = malloc(sizeof(double)*partitionSize * partitionSize);
-	A12 = malloc(sizeof(double)*partitionSize * (N - partitionSize));
-	A21 = malloc(sizeof(double)*(M-partitionSize) * partitionSize);
-	A22 = malloc(sizeof(double)*(M-partitionSize) * (N - partitionSize));
-	B11 = malloc(sizeof(double)*partitionSize * partitionSize);
-	B12 = malloc(sizeof(double)*partitionSize * (P - partitionSize));
-	B21 = malloc(sizeof(double)*(N-partitionSize) * partitionSize);
-	B22 = malloc(sizeof(double)*(N-partitionSize) * (P - partitionSize));
-	C11 = malloc(sizeof(double)*partitionSize * partitionSize);
-	C12 = malloc(sizeof(double)*partitionSize * (P - partitionSize));
-	C21 = malloc(sizeof(double)*(M-partitionSize) * partitionSize);
-	C22 = malloc(sizeof(double)*(M-partitionSize) * (P - partitionSize));
-	T11a = malloc(sizeof(double)*partitionSize * partitionSize);
-	T12a = malloc(sizeof(double)*partitionSize * (P - partitionSize));
-	T21a = malloc(sizeof(double)*(M-partitionSize) * partitionSize);
-	T22a = malloc(sizeof(double)*(M-partitionSize) * (P - partitionSize));
-	T11b = malloc(sizeof(double)*partitionSize * partitionSize);
-	T12b = malloc(sizeof(double)*partitionSize * (P - partitionSize));
-	T21b = malloc(sizeof(double)*(M-partitionSize) * partitionSize);
-	T22b = malloc(sizeof(double)*(M-partitionSize) * (P - partitionSize));
+	allocation = malloc(sizeof(double)*
+		(
+			partitionSize * partitionSize +
+			partitionSize * (N-partitionSize) +
+			(M-partitionSize) * partitionSize +
+			(M-partitionSize) * (N-partitionSize) + 
+			partitionSize * partitionSize + 
+			partitionSize * (P-partitionSize) + 
+			(N-partitionSize)* partitionSize + 
+			(N-partitionSize)*(P-partitionSize) + 
+			partitionSize * partitionSize + 
+			partitionSize * (P-partitionSize) + 
+			(M-partitionSize) * partitionSize + 
+			(M-partitionSize) * (P-partitionSize) + 
+			partitionSize * partitionSize + 
+			partitionSize * (P-partitionSize) + 
+			(M-partitionSize) * partitionSize + 
+			(M-partitionSize) * (P-partitionSize) + 
+			partitionSize * partitionSize + 
+			partitionSize * (P-partitionSize) + 
+			(M-partitionSize) * partitionSize + 
+			(M-partitionSize) * (P-partitionSize) 
+		)
+	);
+	A11 = allocation;
+	A12 = allocation + partitionSize * partitionSize;
+	A21 = A12 + partitionSize * (N-partitionSize);
+	A22 = A21 + (M-partitionSize) * partitionSize;
+	B11 = A22 + (M-partitionSize) * (N-partitionSize);
+	B12 = B11 + partitionSize * partitionSize;
+	B21 = B12 + partitionSize * (P-partitionSize);
+	B22 = B21 + (N-partitionSize) * partitionSize;
+	C11 = B22 + (N-partitionSize) * (P-partitionSize);
+	C12 = C11 + partitionSize * partitionSize;
+	C21 = C12 + partitionSize * (P - partitionSize);
+	C22 = C21 + (M-partitionSize) * partitionSize;
+	T11a = C22 + (M-partitionSize) * (P - partitionSize);
+	T12a = T11a + partitionSize * partitionSize;
+	T21a = T12a + partitionSize * (P - partitionSize);
+	T22a = T21a + (M-partitionSize) * partitionSize;
+	T11b = T22a + (M-partitionSize) * (P - partitionSize);
+	T12b = T11b + partitionSize * partitionSize;
+	T21b = T12b + partitionSize * (P - partitionSize);
+	T22b = T21b + (M-partitionSize) * partitionSize;
 
 	for(i=0; i<partitionSize; i++) {
 		for(j=0; j<partitionSize; j++) {
@@ -722,26 +746,7 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 		}
 	}
 
-	free(A11);
-	free(A12);
-	free(A21);
-	free(A22);
-	free(B11);
-	free(B12);
-	free(B21);
-	free(B22);
-	free(C11);
-	free(C12);
-	free(C21);
-	free(C22);
-	free(T11a);
-	free(T12a);
-	free(T21a);
-	free(T22a);
-	free(T11b);
-	free(T12b);
-	free(T21b);
-	free(T22b);
+	free(allocation);
 
 
 	return;	
