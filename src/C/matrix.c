@@ -453,6 +453,7 @@ int strassenMM2n(double *A, double *B, double *C, uint64_t M)
 	double *D0, *D1, *D2, *D3, *D4, *D5, *D6, *D7, *T1, *T2;
 	uint64_t N, i, j;
 
+printf("strassenMM2n(A, B, C, %" PRIu64 "\n", M);
 
 	if(! powerOfTwo(M)) return(-1);
 	if(M == 2) {
@@ -541,14 +542,16 @@ int strassenMM2n(double *A, double *B, double *C, uint64_t M)
 	MA(D3, D6, T2, N, N);
 	MA(T1, T2, C4, N, N);
 
+
 	for(i=0; i<N; i++) {
 		for(j=0; j<N; j++) {
-			C[(i*N*N)+j] = C1[i*N+j];
-			C[(i*N*N)+(j+N)] = C2[i*N+j];
-			C[((i+N)*N*N)+j] = C3[i*N+j];
-			C[((i+N)*N*N)+(j+N)] = C4[i*N+j];
+			C[(M*i)+j] = C1[N*i+j];
+			C[(M*i)+(N+j)] = C2[N*i+j];
+			C[(M*(N+i))+j] = C3[N*i+j];
+			C[(M*(N+i))+(N+j)] = C4[N*i+j];
 		}
 	}
+
 	free(A1);
 	free(A2);
 	free(A3);
@@ -590,7 +593,6 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 
 	partitionSize = pow(2, floor(log2(minMNP)));
 	if(partitionSize < 4) {
-		printf("Calling dMMT2(A, B, C, %" PRIu64 ", %" PRIu64 ", %" PRIu64 " )\n", M, N, P);
 		dMMT2(A, B, C, M, N, P);
 		return(0);
 	}
@@ -619,7 +621,7 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 	T12b = malloc(sizeof(double)*partitionSize * (P - partitionSize));
 	T21b = malloc(sizeof(double)*(M-partitionSize) * partitionSize);
 	T22b = malloc(sizeof(double)*(M-partitionSize) * (P - partitionSize));
-printf("B12 = %p\n", B12);
+
 	for(i=0; i<partitionSize; i++) {
 		for(j=0; j<partitionSize; j++) {
 			A11[(partitionSize * i) + j] = A[N*i+j];
@@ -627,51 +629,48 @@ printf("B12 = %p\n", B12);
 		}
 	}
 
-	printf("A11 = \n");
-	printMatrix(A11, partitionSize, partitionSize);
-	printf("B11 = \n");
-	printMatrix(B11, partitionSize, partitionSize);
-
 	for(i=0; i<partitionSize; i++) {
-		for(j=0; j<P - partitionSize; j++) {
-			A12[(N - partitionSize)*i+j] = A[N*i+(partitionSize+j)];
-			B12[(P - partitionSize)*i+j] = B[P*i+(partitionSize+j)];
+		for(j=0; j<N-partitionSize; j++) {
+			A12[(N-partitionSize)*i+j] = A[N*i+(partitionSize+j)];
+		}
+	}
+	for(i=0; i<partitionSize; i++) {
+		for(j=0; j<P-partitionSize; j++) {
+			B12[(P-partitionSize)*i+j] = B[P*i+(partitionSize+j)];
 		}
 	}
 
-	printf("A12 = \n");
-	printMatrix(A12, partitionSize, N - partitionSize);
-printf("B12 = %p\n", B12);
-	printf("B12(%" PRIu64 ", %" PRIu64 ") = \n", partitionSize, P - partitionSize);
-	printMatrix(B12,  partitionSize,  P - partitionSize);
-
-
-	for(i=0; i<(M-partitionSize); i++) {
+	for(i=0; i<M-partitionSize; i++) {
 		for(j=0; j<partitionSize; j++) {
-			A21[partitionSize*i + j] = A[N*i+j];
-			B21[partitionSize*i + j] = B[P*i+j];
+			A21[(partitionSize)*i+j] = A[N*(partitionSize + i)+j];
+		}
+	}
+	for(i=0; i<N-partitionSize; i++) {
+		for(j=0; j<partitionSize; j++) {
+			B21[(partitionSize)*i+j] = B[P*(partitionSize + i)+j];
 		}
 	}
 
+
 	for(i=0; i<(M-partitionSize); i++) {
-		for(j=0; j<(P - partitionSize); j++) {
-			A22[(P - partitionSize)*i+j] = A22[N*i+(partitionSize+j)];
-			B22[(P - partitionSize)*i+j] = B22[P*i+(partitionSize+j)];
+		for(j=0; j<(N-partitionSize); j++) {
+			A22[(N-partitionSize)*i+j] = A[N*(partitionSize + i)+(partitionSize +j)];			
+		}
+	}
+	for(i=0; i<(N-partitionSize); i++) {
+		for(j=0; j<(P-partitionSize); j++) {
+			B22[(P-partitionSize)*i+j] = B[P*(partitionSize + i)+(partitionSize+j)];
 		}
 	}
 
 	strassenMM2n(A11, B11, T11a, partitionSize);
 	if(N > partitionSize) {
-		printf("C11 is added\n");
 		strassenMM(A12, B21, T11b, partitionSize, (N-partitionSize), partitionSize);
 		MA(T11a, T11b, C11, partitionSize, partitionSize);
 	} else {
-		printf("C11 is copied\n");
 		memcpy(C11, T11a, sizeof(double)*partitionSize * partitionSize);
 	}
 
-	printf("C1 = \n");
-	printMatrix(C11, partitionSize, partitionSize);
 
 	if(P > partitionSize) {
 		strassenMM(A11, B12, T12a, partitionSize, partitionSize, (P - partitionSize));
@@ -682,9 +681,6 @@ printf("B12 = %p\n", B12);
 			memcpy(C12, T12a, sizeof(double) * partitionSize * (P - partitionSize));
 		}
 	}
-
-	printf("C2 = \n");
-	printMatrix(C12, partitionSize, (P - partitionSize));
 
 	if(M > partitionSize) {
 		strassenMM(A21, B11, T21a, (M-partitionSize), partitionSize, partitionSize);
@@ -720,13 +716,13 @@ printf("B12 = %p\n", B12);
 
 	for(i=0; i<(M-partitionSize); i++) {
 		for(j=0; j<partitionSize; j++) {
-			C[(partitionSize+N)*i+j] = C21[partitionSize*i + j];
+			C[P*(partitionSize+i)+j] = C21[partitionSize*i + j];
 		}
 	}
 
 	for(i=0; i<(M-partitionSize); i++) {
 		for(j=0; j<(P - partitionSize); j++) {
-			C[(partitionSize+N)*i+(partitionSize+j)] = C22[(P - partitionSize)*i+j];
+			C[P*(partitionSize+i)+(partitionSize+j)] = C22[(P-partitionSize)*i+j];
 		}
 	}
 
