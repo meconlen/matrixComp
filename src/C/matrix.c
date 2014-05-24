@@ -629,12 +629,12 @@ printf("B12 = %p\n", B12);
 
 	printf("A11 = \n");
 	printMatrix(A11, partitionSize, partitionSize);
-
 	printf("B11 = \n");
 	printMatrix(B11, partitionSize, partitionSize);
+
 	for(i=0; i<partitionSize; i++) {
 		for(j=0; j<P - partitionSize; j++) {
-			A12[(P - partitionSize)*i+j] = A[N*i+(partitionSize+j)];
+			A12[(N - partitionSize)*i+j] = A[N*i+(partitionSize+j)];
 			B12[(P - partitionSize)*i+j] = B[P*i+(partitionSize+j)];
 		}
 	}
