@@ -419,6 +419,24 @@ int dMMT2(double *A, double *B, double *C, uint64_t m, uint64_t n, uint64_t p)
 	}
 }
 
+int dMMT2r(double *restrict A, double *restrict B, double *restrict C, uint64_t m, uint64_t n, uint64_t p)
+{
+	uint64_t	i, j, k;
+
+	memset(C, 0, m*p*sizeof(double));
+	for(i=0; i<m; i++) { /* A row */
+		for(j=0; j<n; j++) { /* A col, B row */
+			for(k=0; k<p; k++) { /* B col */
+
+				/* so C has m(k) rows and p(j) columns */
+				/* computing on row k and column i*/
+				/* C[k][j] += A[k][i] * B[i][j] */ 
+				C[p*i+k] += A[n*i+j] * B[p*j+k];
+			}
+		}
+	}
+}
+
 inline int powerOfTwo(uint64_t x)
 {
 	return( (x != 0) && ( ( (~x +1) & x) == x) );
@@ -446,7 +464,7 @@ inline int MS(double *A, double *B, double *C, uint64_t M, uint64_t N)
 	return(0);
 }
 
-int strassenMM2n(double *A, double *B, double *C, uint64_t M)
+inline int strassenMM2n(double *A, double *B, double *C, uint64_t M)
 {
 	double D[7];
 	double *allocation;

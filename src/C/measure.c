@@ -86,6 +86,9 @@ int main(int argc, char *argv[], char *envp[])
 					dMMT2(A, B, C, size, size, size);
 					break;
 				case 4:
+					dMMT2r(A, B, C, size, size, size);
+					break;
+				case 5:
 					strassenMM(A, B, C, size, size, size);
 					break;
 				default:
