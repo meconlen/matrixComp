@@ -85,6 +85,11 @@ int main(int argc, char *argv[], char *envp[])
 				case 3:
 					dMMT2(A, B, C, size, size, size);
 					break;
+				case 4:
+					strassenMM(A, B, C, size, size, size);
+					break;
+				default:
+					goto error1;
 			}
 
 #ifdef HAVE_CLOCK_GETTIME
@@ -115,6 +120,9 @@ int main(int argc, char *argv[], char *envp[])
 		printf("%u %u %f\n", size, count, gflops);
 	}
 	return(0);
+error1:
+	fprintf(stderr, "Unknown algorithm\n");
+	exit(-1);
 error0:
 	fprintf(stderr, "Usage: %s -n N\n", argv[0]);
 	fprintf(stderr, "N = matrix size\n");

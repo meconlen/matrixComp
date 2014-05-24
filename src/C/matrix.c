@@ -333,10 +333,10 @@ void unit_matrix_strassenMMVariable(void)
 			for(k=1; k<=20; k++) {
 				memset(C1, 0, sizeof(double)*400);
 				memset(C2, 0, sizeof(double)*400);
-				printf("Testing strassemMM(A, B, C, %" PRIu64 ", %" PRIu64 ", %" PRIu64 ")\n", i, j, k);
 				dMM((double *)A, (double *)B, (double *)C1, i, j, k);
 				strassenMM((double *)A, (double *)B, (double *)C2, i, j, k);				
 				for(l=0; l<i*k; l++) { 
+					CU_ASSERT(C1[l] == C2[l]);
 					if(C1[l] != C2[l]) {
 						printf("error on i = %" PRIu64 ", j = %" PRIu64 ", k = %" PRIu64 ", on l = %" PRIu64 "\n",
 							i, j, k, l);
@@ -453,8 +453,6 @@ int strassenMM2n(double *A, double *B, double *C, uint64_t M)
 	double *D0, *D1, *D2, *D3, *D4, *D5, *D6, *D7, *T1, *T2;
 	uint64_t N, i, j;
 
-printf("strassenMM2n(A, B, C, %" PRIu64 "\n", M);
-
 	if(! powerOfTwo(M)) return(-1);
 	if(M == 2) {
 		D[0] = (A[0] + A[3])*(B[0]+B[3]); 
@@ -495,14 +493,14 @@ printf("strassenMM2n(A, B, C, %" PRIu64 "\n", M);
 	T2 = malloc(sizeof(double)*N*N);
 	for(i=0; i<N; i++) {
 		for(j=0; j<N; j++) {
-			A1[i*N+j] = A[(i*N*N) + j];
-			A2[i*N+j] = A[(i*N*N) + (N+j)];
-			A3[i*N+j] = A[((i+N)*N*N) + j];
-			A4[i*N+j] = A[((i+N)*N*N) + (N+j)];
-			B1[i*N+j] = B[(i*N*N) + j];
-			B2[i*N+j] = B[(i*N*N) + (N+j)];
-			B3[i*N+j] = B[((i+N)*N*N) + j];
-			B4[i*N+j] = B[((i+N)*N*N) + (N+j)];
+			A1[i*N+j] = A[(M*i) + j];
+			A2[i*N+j] = A[(M*i) + (N+j)];
+			A3[i*N+j] = A[((i+N)*M) + j];
+			A4[i*N+j] = A[((i+N)*M) + (N+j)];
+			B1[i*N+j] = B[(i*M) + j];
+			B2[i*N+j] = B[(i*M) + (N+j)];
+			B3[i*N+j] = B[((i+N)*M) + j];
+			B4[i*N+j] = B[((i+N)*M) + (N+j)];
 		}
 	}
 	/* D1 */
@@ -586,13 +584,11 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 	double 		*T11a, *T12a, *T21a, *T22a;
 	double 		*T11b, *T12b, *T21b, *T22b;
 
-	printf("strassenMM(A, B, C, %" PRIu64 ", %" PRIu64 ", %" PRIu64 " )\n", M, N, P);
-
 	t = M < N ? M : N;
 	minMNP = t < P ? t : P;
 
 	partitionSize = pow(2, floor(log2(minMNP)));
-	if(partitionSize < 4) {
+	if(partitionSize <= 1024) {
 		dMMT2(A, B, C, M, N, P);
 		return(0);
 	}
