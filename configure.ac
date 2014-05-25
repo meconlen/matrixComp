@@ -17,7 +17,7 @@ case $host_os in
 		LDFLAGS="$LDFLAGS -L/opt/local/lib"
 		;;
 	linux*)
-		CFLAGS="-march=native -mavx2 $CFLAGS"
+		CFLAGS="-march=native $CFLAGS"
 		# Do something specific for linux
 		;;
 	*BSD*)
