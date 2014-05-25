@@ -8,8 +8,8 @@ AC_PROG_CXX([g++-mp-4.8 g++])
 AC_PROG_CC([gcc-mp-4.8 gcc])
 AC_HEADER_STDC
 
-CFLAGS="$CFLAGS -std=c99 -O3 -funroll-loops -mfpmath=sse -mbmi2"
-CPPFLAGS="$CPPFLAGS -O3"
+CFLAGS="-std=c99 -O3 -funroll-loops -mfpmath=sse -mbmi2"
+CPPFLAGS="$CPPFLAGS"
 case $host_os in
 	darwin* )
 		CFLAGS="$CFLAGS -I/opt/local/include"
