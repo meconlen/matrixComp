@@ -61,7 +61,7 @@ int main(int argc, char *argv[], char *envp[])
 			default:
 				goto error0;
 		}
-	fprintf(stderr, "start = %d, end = %d, skip = %d, count = %d\n",
+	if(debug > 0) fprintf(stderr, "start = %d, end = %d, skip = %d, count = %d\n",
 		start, end, skip, count);
 	for(size=start; size<=end; size+=skip) {
 		if(debug > 0) fprintf(stderr, "Starting size = %d\n", size);
