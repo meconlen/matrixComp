@@ -591,7 +591,7 @@ int strassenMM(double *A, double *B, double *C, uint64_t M, uint64_t N, uint64_t
 
 	partitionSize = pow(2, floor(log2(minMNP)));
 	if(partitionSize <= 1024) {
-		dMMT2(A, B, C, M, N, P);
+		dMMT2r(A, B, C, M, N, P);
 		return(0);
 	}
 	if(M == N && N == P && P == partitionSize) {
